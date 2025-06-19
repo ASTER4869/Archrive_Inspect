@@ -9,6 +9,7 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
 
 class Config(QConfig):
     itemFileUrl = ""
+    ocrFolderUrl=""
 
 
 cfg = Config()

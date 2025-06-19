@@ -7,6 +7,7 @@ from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
                             InfoBadgePosition)
 from qfluentwidgets import FluentIcon as FIF
 from .home_interface import HomeInterface
+from .ocr_interface import OCRInterface
 class Widget(QFrame):
 
     def __init__(self, text: str, parent=None):
@@ -23,22 +24,23 @@ class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
         self.homeInterface = HomeInterface(self)
-        self.settingInterface = Widget('Setting Interface', self)
+        self.ocrInterface = OCRInterface(self)
 
 
         self.initNavigation()
         self.initWindow()
 
     def initNavigation(self):
-        self.addSubInterface(self.homeInterface, FIF.HOME, 'Home')
+        self.addSubInterface(self.homeInterface, FIF.HOME, '目录检测')
+        self.addSubInterface(self.ocrInterface, FIF.FOLDER, 'OCR检测')
         self.navigationInterface.addSeparator()
 
-        self.addSubInterface(self.settingInterface, FIF.SETTING, 'Settings', NavigationItemPosition.BOTTOM)
+        
 
 
     def initWindow(self):
         self.resize(900, 700)
-        self.setWindowTitle('PyQt-Fluent-Widgets')
+        self.setWindowTitle('检测程序')
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()

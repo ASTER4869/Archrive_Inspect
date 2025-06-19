@@ -1,3 +1,4 @@
+# coding:utf-8
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths,QThread
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog,QHBoxLayout,QVBoxLayout

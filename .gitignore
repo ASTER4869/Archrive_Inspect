@@ -1,2 +1,12 @@
 /.idea
 /.idea
+app/tool/__pycache__/classify.cpython-37.pyc
+app/tool/__pycache__/config.cpython-37.pyc
+app/tool/__pycache__/config.cpython-37.pyc
+app/tool/__pycache__/work.cpython-37.pyc
+app/view/__pycache__/main_window.cpython-37.pyc
+app/view/__pycache__/ocr_interface.cpython-37.pyc
+/result
+app/view/__pycache__/main_window.cpython-37.pyc
+/app/view/__pycache__
+/app/tool/__pycache__

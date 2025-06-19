@@ -1,9 +1,8 @@
+# coding:utf-8
 import re
 import fitz  # PyMuPDF的导入名
 import glob
 import time
-from tkinter import filedialog
-import tkinter as tk
 import os
 import threading
 
@@ -103,19 +102,14 @@ def classify_pdf(file_path, threshold_per_page=20):
         return "error"
 
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.withdraw()
-    create_directory('result')
+def classify_ocr_pdf(PDF_DIR):
 
-    while True:
-        pdf_path = ""
-        temp=False
-        pdf_path = filedialog.askdirectory()
-        if pdf_path == "":
-            break
+    create_directory('result')
+    temp=False
+    print(PDF_DIR)
+    if PDF_DIR:
         print("Start...")
-        pattern = pdf_path+'/**/*.pdf'
+        pattern = PDF_DIR+'/**/*.pdf'
         time_format = "%Y%m%d%H%M%S"
         file = './result/'+time.strftime(time_format, time.localtime())+'.txt'
         f = open(file,'a+')
@@ -135,5 +129,5 @@ if __name__ == "__main__":
         if temp:
             print("\nExist!")
         print("\nEnd")
-        input("Please press any key to continue.")
+        
 
