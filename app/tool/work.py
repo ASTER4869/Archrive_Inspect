@@ -7,7 +7,7 @@ class WorkerThread(QThread):
     process = pyqtSignal(object)
     message = pyqtSignal(object)
     def __init__(self, func, *args, **kwargs):
-        super().__init__()
+        QThread.__init__(self)
         self.func = func
         self.args = args
         self.kwargs = kwargs

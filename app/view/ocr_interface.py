@@ -119,10 +119,12 @@ class OCRInterface(ScrollArea):
         self.ocrOperateCard.groupWidgets[0].setContent(folder)
     def __onOperateButtonClicked(self):
         self.progressBar.setValue(0)
+
         self.thread = WorkerThread(classify_ocr_pdf,cfg.ocrFolderUrl)  # 逻辑函数
+        self.thread.start()
         self.thread.message.connect(self.updateText)
         self.thread.process.connect(self.updateProcess)
-        self.thread.start()
+
 
     def __connectSignalToSlot(self):
         self.ocrOperateCard.chooseButton.clicked.connect(

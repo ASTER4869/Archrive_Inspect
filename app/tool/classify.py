@@ -6,56 +6,56 @@ import time
 import os
 import threading
 
-def glob_with_progress(self,pathname: str, recursive: bool = False, interval: float = 1.0):
-    """
-    带进度显示功能的glob函数包装器
-
-    参数:
-    pathname: 搜索路径，支持通配符
-    recursive: 是否递归搜索子目录
-    interval: 进度显示的时间间隔（秒）
-
-    返回:
-    匹配的文件路径列表
-    """
-    # 提取搜索目录用于状态显示
-
-
-    # 定义停止标志和结果容器
-    stop_event = threading.Event()
-    result = []
-
-    def glob_task():
-        nonlocal result
-        result = glob.glob(pathname, recursive=recursive)
-        stop_event.set()  # 标记任务已完成
-
-    def progress_task():
-        start_time = time.time()
-
-        while not stop_event.is_set():
-                pass
-
-        # 输出最终结果
-        total_time = time.time() - start_time
-        print(f"文件检索耗时 {total_time:.2f} 秒")
-        self.message.emit(f"文件检索耗时 {total_time:.2f} 秒")
-
-    # 启动glob任务线程
-    glob_thread = threading.Thread(target=glob_task)
-    glob_thread.start()
-
-    # 启动进度显示线程
-    progress_thread = threading.Thread(target=progress_task)
-    progress_thread.start()
-
-    # 等待glob任务完成
-    glob_thread.join()
-
-    # 等待进度线程完成最后的输出
-    progress_thread.join(timeout=interval * 2)
-
-    return result
+# def glob_with_progress(self,pathname: str, recursive: bool = False, interval: float = 1.0):
+#     """
+#     带进度显示功能的glob函数包装器
+#
+#     参数:
+#     pathname: 搜索路径，支持通配符
+#     recursive: 是否递归搜索子目录
+#     interval: 进度显示的时间间隔（秒）
+#
+#     返回:
+#     匹配的文件路径列表
+#     """
+#     # 提取搜索目录用于状态显示
+#
+#
+#     # 定义停止标志和结果容器
+#     stop_event = threading.Event()
+#     result = []
+#
+#     def glob_task():
+#         nonlocal result
+#         result = glob.glob(pathname, recursive=recursive)
+#         stop_event.set()  # 标记任务已完成
+#
+#     def progress_task():
+#         start_time = time.time()
+#
+#         while not stop_event.is_set():
+#                 pass
+#
+#         # 输出最终结果
+#         total_time = time.time() - start_time
+#         print(f"文件检索耗时 {total_time:.2f} 秒")
+#         self.message.emit(f"文件检索耗时 {total_time:.2f} 秒")
+#
+#     # 启动glob任务线程
+#     glob_thread = threading.Thread(target=glob_task)
+#     glob_thread.start()
+#
+#     # 启动进度显示线程
+#     progress_thread = threading.Thread(target=progress_task)
+#     progress_thread.start()
+#
+#     # 等待glob任务完成
+#     glob_thread.join()
+#
+#     # 等待进度线程完成最后的输出
+#     progress_thread.join(timeout=interval * 2)
+#
+#     return result
 
 
 def create_directory(path):
@@ -112,9 +112,11 @@ def classify_ocr_pdf(self,PDF_DIR):
         file = './result/'+time.strftime(time_format, time.localtime())+'.txt'
         f = open(file,'a+')
         start_time = time.time()
-        pathList=glob_with_progress(self,pattern, recursive=True)
+
+        pathList=glob.glob(pattern, recursive=True)
         #pathList=glob.glob(pattern, recursive=True)
-        
+        total_time = time.time() - start_time
+        self.message.emit(f"文件检索耗时 {total_time:.2f} 秒")
         for i in range(0,len(pathList)):
             result = classify_pdf(self,pathList[i])
             name = re.split(r'[\\.|]',pathList[i])
