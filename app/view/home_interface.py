@@ -8,7 +8,7 @@ from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths,QThread
 from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog,QHBoxLayout,QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog,QHBoxLayout,QVBoxLayout,QTextBrowser
 from ..tool.xls_view import dataCheck,pdfFileCheck
 from ..tool.config import cfg
 from ..tool.work import WorkerThread
@@ -56,13 +56,15 @@ class HomeInterface(ScrollArea):
 
 
         self.indexOperateCard=IndexOperateCard()
+
+        self.textBrowser=QTextBrowser()
         self.__initWidget()
         self.__connectSignalToSlot()
 
     def __initWidget(self):
         self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setViewportMargins(10, 20, 0, 20)
+        self.setViewportMargins(10, 20, 0, 30)
         self.setWidget(self.view)
         self.setWidgetResizable(True)
         self.setObjectName('homeInterface')
@@ -72,7 +74,7 @@ class HomeInterface(ScrollArea):
         # self.settingLabel.setObjectName('settingLabel')
 
         self.vBoxLayout.setSpacing(10)
-        self.vBoxLayout.setContentsMargins(0, 0, 10, 30)
+        self.vBoxLayout.setContentsMargins(0, 0, 10, 10)
 
         # initialize layout
         self.__initLayout()
@@ -80,6 +82,8 @@ class HomeInterface(ScrollArea):
 
     def __initLayout(self):
         self.vBoxLayout.addWidget(self.indexOperateCard, 0, Qt.AlignTop)
+        self.vBoxLayout.addWidget(self.textBrowser, 1, Qt.AlignTop)
+
         self.setStyleSheet("QScrollArea {border: none; background:transparent}")
         self.view.setStyleSheet('QWidget {background:transparent}')
 

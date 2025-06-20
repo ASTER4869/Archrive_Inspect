@@ -6,7 +6,7 @@ import time
 import os
 import threading
 
-def glob_with_progress(pathname: str, recursive: bool = False, interval: float = 1.0):
+def glob_with_progress(self,pathname: str, recursive: bool = False, interval: float = 1.0):
     """
     带进度显示功能的glob函数包装器
 
@@ -34,13 +34,12 @@ def glob_with_progress(pathname: str, recursive: bool = False, interval: float =
         start_time = time.time()
 
         while not stop_event.is_set():
-                for i in range(3):
-                    print(f'\rLoading{"." * i}{" " * (3 - i)}', end="", flush=True)
-                    time.sleep(0.3)
+                pass
 
         # 输出最终结果
         total_time = time.time() - start_time
         print(f"文件检索耗时 {total_time:.2f} 秒")
+        self.message.emit(f"文件检索耗时 {total_time:.2f} 秒")
 
     # 启动glob任务线程
     glob_thread = threading.Thread(target=glob_task)
@@ -65,13 +64,9 @@ def create_directory(path):
         print(f"Directory '{path}' created successfully")
     except Exception as e:
         print(f"Error creating directory '{path}': {e}")
-def progress_bar(total, current):
-    bar_length = 30
-    filled = int(bar_length * current / total)
-    bar = '█' * filled + '░' * (bar_length - filled)
-    print(f"\r|{bar}| {current/total:.1%}", end="", flush=True)
 
-def classify_pdf(file_path, threshold_per_page=20):
+
+def classify_pdf(self,file_path, threshold_per_page=20):
     """
     判断PDF类型：富文本或图片为主
     
@@ -99,35 +94,43 @@ def classify_pdf(file_path, threshold_per_page=20):
     
     except Exception as e:
         print(f"Error: {e}")
+        
         return "error"
 
 
-def classify_ocr_pdf(PDF_DIR):
+def classify_ocr_pdf(self,PDF_DIR):
 
     create_directory('result')
     temp=False
-    print(PDF_DIR)
+    print(PDF_DIR+'\n')
+    self.message.emit(PDF_DIR)
     if PDF_DIR:
         print("Start...")
+        self.message.emit("Start...")
         pattern = PDF_DIR+'/**/*.pdf'
         time_format = "%Y%m%d%H%M%S"
         file = './result/'+time.strftime(time_format, time.localtime())+'.txt'
         f = open(file,'a+')
-        pathList=glob_with_progress(pattern, recursive=True)
-        #pathList=glob.glob(pattern, recursive=True)
         start_time = time.time()
+        pathList=glob_with_progress(self,pattern, recursive=True)
+        #pathList=glob.glob(pattern, recursive=True)
+        
         for i in range(0,len(pathList)):
-            result = classify_pdf(pathList[i])
+            result = classify_pdf(self,pathList[i])
             name = re.split(r'[\\.|]',pathList[i])
             if result:
                 temp=True
                 f.write(f"{pathList[i]}\n")
-            progress_bar(len(pathList), i+1)
+            self.process.emit(int((i+1)/len(pathList)*100))
         f.close()
         total_time = time.time() - start_time
         print(f"总耗时 {total_time:.2f} 秒")
+        
+        self.message.emit(f"总耗时 {total_time:.2f} 秒")
         if temp:
             print("\nExist!")
-        print("\nEnd")
+            self.message.emit("存在未OCR文件!")
+        print("End\n")
+        self.message.emit("End\n")
         
 

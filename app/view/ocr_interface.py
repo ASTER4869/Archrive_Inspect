@@ -2,13 +2,13 @@
 from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard,BodyLabel,
                             OptionsSettingCard, PushSettingCard,PushButton,IconWidget,InfoBarIcon,
                             PrimaryPushButton,FluentIcon, PrimaryPushSettingCard, ScrollArea,ComboBox,SearchLineEdit,
-                            ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
+                            ComboBoxSettingCard, ExpandLayout, ProgressBar, CustomColorSettingCard,
                             setTheme, setThemeColor, GroupHeaderCardWidget, isDarkTheme)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
 from PyQt5.QtCore import Qt, pyqtSignal, QUrl, QStandardPaths,QThread
 from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtWidgets import QWidget, QLabel, QFileDialog,QHBoxLayout,QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel,QProgressBar, QFileDialog,QHBoxLayout,QVBoxLayout,QTextBrowser,QApplication
 from ..tool.classify import classify_ocr_pdf
 from ..tool.config import cfg
 from ..tool.work import WorkerThread
@@ -52,6 +52,14 @@ class OCRInterface(ScrollArea):
         self.view = QWidget(self)
         self.vBoxLayout = QVBoxLayout(self.view)
         self.ocrOperateCard=OCROperateCard()
+        self.textBrowser=QTextBrowser()
+        self.progressBar = QProgressBar()
+
+        # 设置取值范围
+        self.progressBar.setRange(0, 100)
+
+        # 设置当前值
+        self.progressBar.setValue(0)
         self.__initWidget()
         self.__connectSignalToSlot()
 
@@ -65,7 +73,29 @@ class OCRInterface(ScrollArea):
 
 
         self.vBoxLayout.setSpacing(10)
-        self.vBoxLayout.setContentsMargins(0, 0, 10, 30)
+        self.vBoxLayout.setContentsMargins(10, 10, 10, 30)
+
+        self.progressBar.setStyleSheet("QProgressBar {\n"
+                                       "    border: 2px solid grey;\n"
+                                       "    border-radius: 5px;\n"
+                                       "    text-align: center;\n"
+                                       "}\n"
+                                       "QProgressBar::chunk {\n"
+                                       "    background-color: #05B8CC;\n"
+                                       "    width: 10px;\n"
+                                       "    margin: 0.5px;\n"
+                                       "}")
+        self.textBrowser.setStyleSheet(
+            "QTextBrowser {"
+            "    background-color: #f5f5f5;" 
+        "    border: 2px solid grey;" 
+        "    border-radius: 8px;" 
+        "    padding: 10px;" 
+        "    font-family: '宋体';" 
+        "    font-size: 20px;" 
+        "    color: #333333;" 
+        "}"
+        )
 
         # initialize layout
         self.__initLayout()
@@ -73,6 +103,9 @@ class OCRInterface(ScrollArea):
 
     def __initLayout(self):
         self.vBoxLayout.addWidget(self.ocrOperateCard, 0, Qt.AlignTop)
+        self.vBoxLayout.addWidget(self.progressBar, 0, Qt.AlignTop)
+        self.vBoxLayout.addWidget(self.textBrowser, 1, Qt.AlignTop)
+        self.textBrowser.append("曼波")
         self.setStyleSheet("QScrollArea {border: none; background:transparent}")
         self.view.setStyleSheet('QWidget {background:transparent}')
 
@@ -85,8 +118,10 @@ class OCRInterface(ScrollArea):
         cfg.ocrFolderUrl=folder
         self.ocrOperateCard.groupWidgets[0].setContent(folder)
     def __onOperateButtonClicked(self):
-
+        self.progressBar.setValue(0)
         self.thread = WorkerThread(classify_ocr_pdf,cfg.ocrFolderUrl)  # 逻辑函数
+        self.thread.message.connect(self.updateText)
+        self.thread.process.connect(self.updateProcess)
         self.thread.start()
 
     def __connectSignalToSlot(self):
@@ -94,3 +129,12 @@ class OCRInterface(ScrollArea):
             self.__onChooseButtonClicked)
         self.ocrOperateCard.operateButton.clicked.connect(
             self.__onOperateButtonClicked)
+    def updateText(self,msg):
+        self.textBrowser.append(msg)
+        #self.textBrowser.repaint()
+        self.cursor =  self.textBrowser.textCursor()
+        self.textBrowser.moveCursor(self.cursor.End)
+        QApplication.processEvents()
+    def updateProcess(self,msg):
+        self.progressBar.setValue(msg)
+        QApplication.processEvents()

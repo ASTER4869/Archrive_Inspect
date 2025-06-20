@@ -31,8 +31,9 @@ class MainWindow(FluentWindow):
         self.initWindow()
 
     def initNavigation(self):
-        self.addSubInterface(self.homeInterface, FIF.HOME, '目录检测')
+        self.addSubInterface(self.homeInterface, FIF.DOCUMENT, '目录检测')
         self.addSubInterface(self.ocrInterface, FIF.FOLDER, 'OCR检测')
+        self.addSubInterface(self.ocrInterface, FIF.LIBRARY_FILL, 'OCR检测')
         self.navigationInterface.addSeparator()
 
         
